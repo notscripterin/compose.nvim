@@ -6,6 +6,10 @@ local function notify(msg, level)
 	vim.notify(msg, level, { title = "compose.nvim" })
 end
 
+M.inspect = function(msg)
+	--    vim.notify(vin.inspect(msg), levels.INFO, {title = "compose.nvim"})
+	-- vim.inspect(vim.notify(msg, levels.INFO, { title = "compose.nvim" }))
+end
 M.info = function(msg)
 	notify(msg, levels.INFO)
 end
