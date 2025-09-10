@@ -11,22 +11,32 @@ end
 
 local function get_compose_templates()
 	local obj = vim.system({ "compose", "list-templates" }):wait()
-	log.inspect(obj)
+	local rows = {}
+	for row in string.gmatch(obj.stdout, "[^\n]+") do
+		table.insert(rows, row)
+	end
+	log.inspect(rows)
+	log.inspect(obj.stdout)
 end
 
 function M.init()
 	local templates = get_compose_templates()
-	async.void(function()
-		local project_name = trim(input({ prompt = "App name: " }))
-		local project_id = trim(input({ prompt = "Package (e.g., org.example.myapp): " }))
-
-		log.info(project_name .. project_id)
-	end)()
+	-- async.void(function()
+	-- 	local project_name = trim(input({ prompt = "App name: " }))
+	-- 	local project_id = trim(input({ prompt = "Package (e.g., org.example.myapp): " }))
+	--
+	-- 	log.info(project_name .. project_id)
+	-- 	vim.system({ "comopse", "init", project_name, project_id })
+	-- end)()
 end
 
-function M.sync() end
+function M.sync()
+	vim.system({ "comopse", "sync" })
+end
 
-function M.run() end
+function M.run()
+	vim.system({ "comopse", "run" })
+end
 
 function M.laucher() end
 
@@ -36,8 +46,6 @@ function M.setup(opts)
 	opts = opts or {}
 
 	if vim.fn.executable("compose") == 1 then
-		log.error("Please install compose-cli")
-	else
 		vim.api.nvim_create_user_command("Compose", function(_opts)
 			local subcmd = _opts.args
 
@@ -60,6 +68,8 @@ function M.setup(opts)
 				return { "init", "sync", "run", "launcher", "release" }
 			end,
 		})
+	else
+		log.error("Please install compose-cli")
 	end
 end
 
